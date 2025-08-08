@@ -1,5 +1,6 @@
 import { env } from "@/env";
 import SpotlightCard from "@/components/SpotlightCard";
+import type { CSSProperties } from "react";
 
 export type GitHubRepo = {
   id: number;
@@ -14,6 +15,32 @@ export type GitHubRepo = {
   created_at: string;
   updated_at: string;
 };
+
+function languageTheme(language: string | null): {
+  name: string;
+  colorHex: string; // solid text/border color
+  borderRgba: string; // subtle border color
+  glowRgba: string; // spotlight glow color
+} {
+  const lang = (language ?? "").toLowerCase();
+  // TypeScript lighter blue (tailwind blue-400)
+  if (lang === "typescript") {
+    const hex = "#60a5fa"; // blue-400
+    return {
+      name: "TypeScript",
+      colorHex: hex,
+      borderRgba: "rgba(96, 165, 250, 0.45)",
+      glowRgba: "rgba(96, 165, 250, 0.26)",
+    };
+  }
+  // Default neutral theme
+  return {
+    name: language ?? "Other",
+    colorHex: "#9ca3af", // slate-400
+    borderRgba: "rgba(255,255,255,0.15)",
+    glowRgba: "rgba(255,255,255,0.18)",
+  };
+}
 
 async function fetchRepos(): Promise<GitHubRepo[]> {
   const username = env.NEXT_PUBLIC_GITHUB_USERNAME ?? env.GITHUB_USERNAME ?? "krish-1029";
@@ -72,68 +99,91 @@ export default async function GitHubProjects() {
   return (
     <section className="mt-8">
       <h2 className="mb-4 text-2xl font-semibold">Latest Projects</h2>
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {repos.map((repo, index) => (
-          <SpotlightCard
-            key={repo.id}
-            className="animate-rise rounded-xl border-white/15 bg-white/10 p-7 backdrop-blur-md transition-colors hover:border-white/25 min-h-[180px]"
-            spotlightColor="rgba(0, 229, 255, 0.2)"
-            style={{ animationDelay: `${index * 70}ms` } as React.CSSProperties}
-          >
-            <div className="mb-2 flex items-start justify-between gap-2">
-              <a
-                href={repo.html_url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-lg font-semibold text-white hover:underline"
-              >
-                {repo.name}
-              </a>
-              <span className="shrink-0 rounded-full border border-white/10 px-2 py-0.5 text-xs text-white/70">
-                {repo.language ?? "Other"}
-              </span>
-            </div>
-            {repo.description ? (
-              <p className="mb-3 line-clamp-3 text-sm text-white/70">{repo.description}</p>
-            ) : null}
-
-            <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-white/60">
-              <span>⭐ {repo.stargazers_count}</span>
-              <span>🍴 {repo.forks_count}</span>
-              <span>Updated {formatDate(repo.updated_at)}</span>
-            </div>
-
-            {repo.homepage ? (
-              <div className="flex gap-2">
-                <a
-                  href={repo.homepage}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-md border border-white/10 px-3 py-1 text-sm text-white hover:border-white/20"
-                >
-                  Live Demo
-                </a>
+      <div className="grid auto-rows-fr gap-6 lg:grid-cols-3">
+        {repos.map((repo, index) => {
+          const theme = languageTheme(repo.language);
+          const cardStyle: CSSProperties = {
+            animationDelay: `${index * 80}ms`,
+            borderColor: theme.borderRgba,
+          };
+          const badgeStyle: CSSProperties = {
+            color: theme.colorHex,
+            borderColor: theme.colorHex,
+            backgroundColor: "transparent",
+          };
+          return (
+            <SpotlightCard
+              key={repo.id}
+              className="animate-rise flex h-full flex-col rounded-2xl border p-8 backdrop-blur-md transition-colors min-h-[260px]"
+              spotlightColor={theme.glowRgba}
+              style={cardStyle}
+            >
+              <div className="mb-3 flex items-start justify-between gap-2">
                 <a
                   href={repo.html_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-md border border-white/10 px-3 py-1 text-sm text-white hover:border-white/20"
+                  className="text-xl font-semibold text-white hover:underline"
                 >
-                  GitHub
+                  {repo.name}
                 </a>
+                <span
+                  className="shrink-0 rounded-full border px-2 py-0.5 text-xs"
+                  style={badgeStyle}
+                >
+                  {theme.name}
+                </span>
               </div>
-            ) : (
-              <a
-                href={repo.html_url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-block rounded-md border border-white/10 px-3 py-1 text-sm text-white hover:border-white/20"
-              >
-                GitHub
-              </a>
-            )}
-          </SpotlightCard>
-        ))}
+
+              {repo.description ? (
+                <p className="line-clamp-3 text-sm text-white/75">{repo.description}</p>
+              ) : (
+                <p className="text-sm text-white/50">No description provided.</p>
+              )}
+
+              <div className="mt-auto space-y-3">
+                <div className="flex flex-wrap items-center gap-3 text-xs text-white/65">
+                  <span>⭐ {repo.stargazers_count}</span>
+                  <span>🍴 {repo.forks_count}</span>
+                  <span>Updated {formatDate(repo.updated_at)}</span>
+                </div>
+
+                {repo.homepage ? (
+                  <div className="flex gap-2">
+                    <a
+                      href={repo.homepage}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-md border px-3 py-1.5 text-sm text-white/95 hover:bg-white/5"
+                      style={{ borderColor: theme.borderRgba }}
+                    >
+                      Live Demo
+                    </a>
+                    <a
+                      href={repo.html_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-md border px-3 py-1.5 text-sm text-white/95 hover:bg-white/5"
+                      style={{ borderColor: theme.borderRgba }}
+                    >
+                      GitHub
+                    </a>
+                  </div>
+                ) : (
+                  <a
+                    href={repo.html_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-block rounded-md border px-3 py-1.5 text-sm text-white/95 hover:bg-white/5"
+                    style={{ borderColor: theme.borderRgba }}
+                  >
+                    GitHub
+                  </a>
+                )}
+              </div>
+            </SpotlightCard>
+          );
+        })}
       </div>
     </section>
   );

@@ -25,10 +25,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geist.variable}`}>
-      <body className="min-h-screen bg-[#0f1020] text-white">
+      <body className="flex min-h-screen flex-col bg-[#0f1020] text-white">
         <BackgroundBeams />
         <Header />
-        {children}
+        <main className="flex-1">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

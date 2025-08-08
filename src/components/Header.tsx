@@ -27,23 +27,19 @@ function NavButton({ href, label }: { href: string; label: string }) {
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-transparent backdrop-blur-md">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-2 md:py-3">
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/logo.svg"
-            alt="Krish"
-            width={56}
-            height={56}
-            priority
-          />
-          <span className="sr-only">krish.dev</span>
-        </Link>
-        <nav className="flex items-center gap-2">
-          {navItems.map((item) => (
-            <NavButton key={item.href} href={item.href} label={item.label} />
-          ))}
-        </nav>
+    <header className="sticky top-3 z-50 w-full bg-transparent">
+      <div className="mx-auto w-fit max-w-[92vw] rounded-2xl border border-white/10 bg-white/10 pl-4 pr-2 py-1 backdrop-blur-md supports-[backdrop-filter]:bg-white/10">
+        <div className="flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-3">
+            <Image src="/logo.svg" alt="Krish" width={45} height={45} priority />
+            <span className="sr-only">krish.dev</span>
+          </Link>
+          <nav className="flex items-center gap-1">
+            {navItems.map((item) => (
+              <NavButton key={item.href} href={item.href} label={item.label} />
+            ))}
+          </nav>
+        </div>
       </div>
     </header>
   );
