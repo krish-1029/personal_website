@@ -3,8 +3,8 @@ import FadeContent from "~/components/FadeContent";
 
 export default function LandingPage() {
   return (
-    <main className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
-      <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6 text-center">
+    <section className="px-4 mb-[-3rem]">
+      <div className="mx-auto flex w-full max-w-5xl min-h-[75vh] md:min-h-[80vh] flex-col items-center justify-center gap-6 text-center">
         <FadeContent blur duration={800} easing="ease-out" initialOpacity={0} delay={0}>
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl">
             Krish · Developer, Musician, Writer
@@ -34,6 +34,6 @@ export default function LandingPage() {
           </FadeContent>
         </div>
       </div>
-    </main>
+    </section>
   );
 } 

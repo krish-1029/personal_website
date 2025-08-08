@@ -8,6 +8,8 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
+    GITHUB_TOKEN: z.string().optional(),
+    GITHUB_USERNAME: z.string().optional(),
   },
 
   /**
@@ -16,6 +18,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
+    NEXT_PUBLIC_GITHUB_USERNAME: z.string().optional(),
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
   },
 
@@ -25,6 +28,9 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+    GITHUB_USERNAME: process.env.GITHUB_USERNAME,
+    NEXT_PUBLIC_GITHUB_USERNAME: process.env.NEXT_PUBLIC_GITHUB_USERNAME,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**
