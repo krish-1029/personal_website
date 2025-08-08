@@ -4,7 +4,7 @@ export default function WritingsPage() {
       <h1 className="mb-4 text-3xl font-bold">Writings</h1>
       <p className="text-white/80">
         Long-form essays on cultural analysis, social theory, philosophy,
-        psychology, and theology. If you're concerned about job applications,
+        psychology, and theology. If you&apos;re concerned about job applications,
         we can keep this page separate and unlinked, or add a disclaimer.
       </p>
     </main>
