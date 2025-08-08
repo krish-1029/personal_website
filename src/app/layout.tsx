@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s · Krish",
   },
   description: "Developer portfolio, music, and writings.",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/logo.svg", type: "image/svg+xml" }],
 };
 
 const geist = Geist({
