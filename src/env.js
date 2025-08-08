@@ -19,6 +19,7 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_GITHUB_USERNAME: z.string().optional(),
+    NEXT_PUBLIC_AUDIO_BASE: z.string().url().optional(),
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
   },
 
@@ -31,6 +32,7 @@ export const env = createEnv({
     GITHUB_TOKEN: process.env.GITHUB_TOKEN,
     GITHUB_USERNAME: process.env.GITHUB_USERNAME,
     NEXT_PUBLIC_GITHUB_USERNAME: process.env.NEXT_PUBLIC_GITHUB_USERNAME,
+    NEXT_PUBLIC_AUDIO_BASE: process.env.NEXT_PUBLIC_AUDIO_BASE,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

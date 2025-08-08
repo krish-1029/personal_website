@@ -5,6 +5,9 @@ import { Geist } from "next/font/google";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 import BackgroundBeams from "~/components/BackgroundBeams";
+import AudioPlayerProvider from "@/components/audio/AudioPlayerProvider";
+import GlobalMiniPlayer from "@/components/audio/GlobalMiniPlayer";
+import HeaderSpacer from "@/components/HeaderSpacer";
 
 export const metadata: Metadata = {
   title: {
@@ -26,12 +29,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`}>
       <body className="flex min-h-screen flex-col bg-[#0f1020] text-white">
-        <BackgroundBeams />
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <AudioPlayerProvider>
+          <BackgroundBeams />
+          <Header />
+          <HeaderSpacer />
+          <main className="flex-1">{children}</main>
+          <GlobalMiniPlayer />
+          <Footer />
+        </AudioPlayerProvider>
       </body>
     </html>
   );

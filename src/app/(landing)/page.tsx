@@ -3,7 +3,7 @@ import FadeContent from "~/components/FadeContent";
 
 export default function LandingPage() {
   return (
-    <section className="px-4 mb-[-3rem]">
+    <section className="px-4 pt-16">
       <div className="mx-auto flex w-full max-w-5xl min-h-[75vh] md:min-h-[80vh] flex-col items-center justify-center gap-6 text-center">
         <FadeContent blur duration={800} easing="ease-out" initialOpacity={0} delay={0}>
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl">
@@ -12,9 +12,9 @@ export default function LandingPage() {
         </FadeContent>
         <FadeContent blur duration={800} easing="ease-out" initialOpacity={0} delay={80}>
           <p className="max-w-2xl text-white/80">
-            I build delightful software, compose original music, and write about
-            culture, ideas, and technology.
+            &ldquo;The day you teach someone the name of a bird, they will never see that bird again&rdquo;
           </p>
+          <p className="max-w-2xl italic text-white/80">~ J.Krishnamurti</p>
         </FadeContent>
         <div className="flex flex-wrap items-center justify-center gap-3">
           <FadeContent blur duration={800} easing="ease-out" initialOpacity={0} delay={0}>

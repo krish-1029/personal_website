@@ -1,7 +1,6 @@
 export default function WritingsPage() {
   return (
-    <main className="mx-auto max-w-5xl px-4 py-12 text-white">
-      <h1 className="mb-4 text-3xl font-bold">Writings</h1>
+    <main className="mx-auto max-w-5xl px-4 pt-16 pb-12 text-white">
       <p className="text-white/80">
         Long-form essays on cultural analysis, social theory, philosophy,
         psychology, and theology. If you&apos;re concerned about job applications,

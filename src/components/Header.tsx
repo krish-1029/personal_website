@@ -27,7 +27,7 @@ function NavButton({ href, label }: { href: string; label: string }) {
 
 export default function Header() {
   return (
-    <header className="sticky top-3 z-50 w-full bg-transparent">
+    <header className="sticky top-6 z-50 w-full bg-transparent">
       <div className="mx-auto w-fit max-w-[92vw] rounded-2xl border border-white/10 bg-white/10 pl-4 pr-2 py-1 backdrop-blur-md supports-[backdrop-filter]:bg-white/10">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-3">
