@@ -10,6 +10,9 @@ export const env = createEnv({
     NODE_ENV: z.enum(["development", "test", "production"]),
     GITHUB_TOKEN: z.string().optional(),
     GITHUB_USERNAME: z.string().optional(),
+    SPOTIFY_CLIENT_ID: z.string().optional(),
+    SPOTIFY_CLIENT_SECRET: z.string().optional(),
+    SPOTIFY_PLAYLIST_ID: z.string().optional(),
   },
 
   /**
@@ -33,6 +36,9 @@ export const env = createEnv({
     GITHUB_USERNAME: process.env.GITHUB_USERNAME,
     NEXT_PUBLIC_GITHUB_USERNAME: process.env.NEXT_PUBLIC_GITHUB_USERNAME,
     NEXT_PUBLIC_AUDIO_BASE: process.env.NEXT_PUBLIC_AUDIO_BASE,
+    SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
+    SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
+    SPOTIFY_PLAYLIST_ID: process.env.SPOTIFY_PLAYLIST_ID,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**
