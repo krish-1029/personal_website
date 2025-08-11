@@ -5,6 +5,7 @@ import { Pause, Play, Rewind, FastForward, Volume1, Volume2, VolumeX, ChevronDow
 import { env } from "@/env";
 import { useAudioPlayer } from "@/components/audio/AudioPlayerProvider";
 import SpotifyPlaylist from "@/components/SpotifyPlaylist";
+import AutoBlobTracks, { type Track as BlobTrack } from "@/components/AutoBlobTracks";
 
 type Track = { title: string; src: string };
 
@@ -29,18 +30,11 @@ export default function MusicPage() {
 
   const [view, setView] = useState<"demos" | "complete">("demos");
   const [openRows, setOpenRows] = useState<Set<number>>(new Set());
+  const [blobDemos, setBlobDemos] = useState<BlobTrack[] | null>(null);
+  const [blobCompleted, setBlobCompleted] = useState<BlobTrack[] | null>(null);
+  const [isNoteOpen, setIsNoteOpen] = useState(false);
 
-  const demoTracks: Track[] = useMemo(
-    () => [
-      makeTrack("Medicine (Demo)", audioUrl("Medicine (Demo).mp3")),
-      makeTrack("New Moon (Demo)", audioUrl("New Moon (Demo).mp3")),
-      makeTrack("She Looks So Beautiful (Demo)", audioUrl("She Looks So Beautiful (Demo).mp3")),
-    ], [],
-  );
-
-  const completeTracks: Track[] = useMemo(() => [], []);
-
-  const tracks = view === "demos" ? demoTracks : completeTracks;
+  const tracks = view === "demos" ? (blobDemos ?? []) : (blobCompleted ?? []);
 
   const toggleRow = (index: number) => {
     setOpenRows((prev) => {
@@ -73,14 +67,22 @@ export default function MusicPage() {
             Completed
           </button>
         </div>
+        <button
+          type="button"
+          onClick={() => setIsNoteOpen(true)}
+          className="rounded-md border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-white hover:border-white/25"
+        >
+          Note from me
+        </button>
       </div>
-
-      {/* Player + intro grid */}
-      <div className="mt-8 grid gap-4 md:grid-cols-2 md:gap-6">
-        {/* Left: Player column */}
-        <section className="animate-rise rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md supports-[backdrop-filter]:bg-white/10">
-          {/* Controls */}
-          <div className="mb-4 flex flex-col gap-3">
+      {/* Full-width player */}
+      <section className="mt-8 animate-rise rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md supports-[backdrop-filter]:bg-white/10">
+        <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-2">
+          <h3 className="text-lg md:text-xl font-semibold text-white">My Music</h3>
+        </div>
+        <AutoBlobTracks onLoaded={(d, c) => { setBlobDemos(d); setBlobCompleted(c); }} />
+        {/* Controls */}
+        <div className="mb-4 flex flex-col gap-3">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0 truncate text-white/80">
                 {currentTrack ? currentTrack.title : "No track selected"}
@@ -152,7 +154,7 @@ export default function MusicPage() {
 
           {/* Track list with dropdown lyrics */}
           {tracks.length === 0 ? (
-            <p className="text-white/70">No tracks yet for this view.</p>
+            <p className="text-white/70">No uploads found for this view.</p>
           ) : (
             <ul className="divide-y divide-white/10">
               {tracks.map((t, i) => {
@@ -171,7 +173,7 @@ export default function MusicPage() {
                           if (selected) {
                             togglePlayPause("music");
                           } else {
-                            loadAndPlay(tracks, i);
+                            loadAndPlay(tracks, i, "music");
                           }
                         }}
                         title={selected && isPlaying ? "Pause" : "Play"}
@@ -217,24 +219,42 @@ export default function MusicPage() {
               })}
             </ul>
           )}
-        </section>
+      </section>
 
-        {/* Right: Intro text column */}
-        <div className="animate-rise rounded-2xl border border-white/10 bg-white/5 p-6 md:flex md:items-center">
-          <div className="font-serif">
-            <div className="mb-2 text-xs uppercase tracking-wide text-white/60">Note:</div>
-            <p className="italic leading-relaxed text-white/85">
-              I&apos;ve been writing songs and music since I was about 15 years old. Over that time, music has probably
-              shaped who I am today more than anything else. It speaks a language that I will probably spend the
-              rest of my life trying to decipher, knowing all the while that I never will.
-            </p>
-          </div>
+      {/* Playlist I like */}
+      <div className="mt-6 animate-rise rounded-2xl border border-white/10 bg-white/5 p-6 text-white/80">
+        <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-2">
+          <h3 className="text-lg md:text-xl font-semibold text-white">Playlist I Like</h3>
+          <span className="rounded-md border border-[#1DB954]/30 bg-[#1DB954]/10 px-2 py-0.5 text-[10px] font-medium text-[#1DB954]">Spotify</span>
         </div>
+        <SpotifyPlaylist />
       </div>
 
-      {/* Placeholder for recommendations */}
-      <div className="mt-6 animate-rise rounded-2xl border border-white/10 bg-white/5 p-6 text-white/80">
-        <SpotifyPlaylist />
+      {/* Note modal */}
+      <div
+        className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ${
+          isNoteOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsNoteOpen(false)} />
+        <div
+          className={`relative mx-4 w-full max-w-lg transform rounded-2xl border border-white/10 bg-white/5 p-6 text-white shadow-xl transition-all duration-300 ${
+            isNoteOpen ? "translate-y-0 scale-100" : "translate-y-4 scale-95"
+          }`}
+        >
+          <button
+            className="absolute right-3 top-3 rounded-md border border-white/15 bg-white/10 px-2 py-1 text-xs text-white hover:border-white/25"
+            onClick={() => setIsNoteOpen(false)}
+          >
+            Close
+          </button>
+          <div className="mb-2 text-xs uppercase tracking-wide text-white/60">Note:</div>
+          <p className="font-serif italic leading-relaxed text-white/85">
+            I&apos;ve been writing songs and music since I was about 15 years old. Over that time, music has probably
+            shaped who I am today more than anything else. It speaks a language that I will probably spend the
+            rest of my life trying to decipher, knowing all the while that I never will.
+          </p>
+        </div>
       </div>
     </main>
   );

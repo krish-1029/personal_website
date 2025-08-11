@@ -12,10 +12,11 @@ export type AudioPlayerContextValue = {
   currentTime: number;
   duration: number;
   volume: number; // 0..1
-  lastPauseSource: "mini" | "music" | null;
+  lastPauseSource: "mini" | "music" | null; // New: tracks where pause originated
+  globalOrigin: "music" | "none"; // New: tracks if playback started from music page
   // controls
-  loadAndPlay: (tracks: AudioTrack[], index: number) => void;
-  togglePlayPause: (source?: "mini" | "music") => void;
+  loadAndPlay: (tracks: AudioTrack[], index: number, source?: "music" | "other") => void; // Added source
+  togglePlayPause: (source?: "mini" | "music") => void; // Added source
   playNext: () => void;
   playPrev: () => void;
   seek: (time: number) => void;
@@ -39,7 +40,8 @@ export default function AudioPlayerProvider({ children }: { children: React.Reac
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [volume, setVolumeState] = useState<number>(1);
-  const [lastPauseSource, setLastPauseSource] = useState<"mini" | "music" | null>(null);
+  const [lastPauseSource, setLastPauseSource] = useState<"mini" | "music" | null>(null); // New state
+  const [globalOrigin, setGlobalOrigin] = useState<"music" | "none">("none"); // New state
 
   const currentTrack = useMemo(() => (currentIndex >= 0 ? queue[currentIndex] : undefined), [queue, currentIndex]);
 
@@ -47,13 +49,13 @@ export default function AudioPlayerProvider({ children }: { children: React.Reac
     try {
       await audio.play();
       setIsPlaying(true);
-      setLastPauseSource(null);
+      setLastPauseSource(null); // Clear pause source on play
     } catch {
       setIsPlaying(false);
     }
   };
 
-  const loadAndPlay = useCallback((tracks: AudioTrack[], index: number) => {
+  const loadAndPlay = useCallback((tracks: AudioTrack[], index: number, source?: "music" | "other") => {
     const audio = audioRef.current;
     if (!audio || index < 0 || index >= tracks.length) return;
     setQueue(tracks);
@@ -61,6 +63,7 @@ export default function AudioPlayerProvider({ children }: { children: React.Reac
     audio.src = tracks[index]?.src ?? "";
     audio.currentTime = 0;
     setCurrentTime(0);
+    if (source === "music") setGlobalOrigin("music"); // Set origin if from music page
     void safePlay(audio);
   }, []);
 
@@ -88,7 +91,7 @@ export default function AudioPlayerProvider({ children }: { children: React.Reac
     const audio = audioRef.current;
     if (!audio) return;
     if (currentIndex < 0) {
-      if (queue.length > 0) loadAndPlay(queue, 0);
+      if (queue.length > 0) loadAndPlay(queue, 0, source === "music" ? "music" : undefined);
       return;
     }
     if (isPlaying) {
@@ -144,6 +147,26 @@ export default function AudioPlayerProvider({ children }: { children: React.Reac
     if (audio) audio.volume = Math.min(1, Math.max(0, volume));
   }, [volume]);
 
+  // Global spacebar toggles play/pause on any page when a track is loaded
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      // Ignore typing controls
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName?.toLowerCase();
+      const isFormField = tag === "input" || tag === "textarea" || tag === "select" || (target as any)?.isContentEditable;
+      if (isFormField) return;
+
+      if (e.code === "Space" || e.key === " " || e.key === "Spacebar") {
+        if (currentIndex >= 0) {
+          e.preventDefault();
+          togglePlayPause("mini");
+        }
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [currentIndex, togglePlayPause]);
+
   const value: AudioPlayerContextValue = {
     queue,
     currentIndex,
@@ -153,6 +176,7 @@ export default function AudioPlayerProvider({ children }: { children: React.Reac
     duration,
     volume,
     lastPauseSource,
+    globalOrigin,
     loadAndPlay,
     togglePlayPause,
     playNext,

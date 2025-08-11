@@ -33,8 +33,11 @@ export default function RootLayout({
           <BackgroundBeams />
           <Header />
           <HeaderSpacer />
-          <main className="flex-1">{children}</main>
-          <GlobalMiniPlayer />
+          {/* Content container that ends above the footer; sticky mini-player lives here */}
+          <div className="flex-1 flex flex-col">
+            <main className="flex-1">{children}</main>
+            <GlobalMiniPlayer position="sticky" />
+          </div>
           <Footer />
         </AudioPlayerProvider>
       </body>

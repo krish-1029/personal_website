@@ -13,6 +13,8 @@ export const env = createEnv({
     SPOTIFY_CLIENT_ID: z.string().optional(),
     SPOTIFY_CLIENT_SECRET: z.string().optional(),
     SPOTIFY_PLAYLIST_ID: z.string().optional(),
+    // Vercel Blob read token (fine-grained)
+    KS_READ_WRITE_TOKEN: z.string().optional(),
   },
 
   /**
@@ -39,6 +41,7 @@ export const env = createEnv({
     SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
     SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
     SPOTIFY_PLAYLIST_ID: process.env.SPOTIFY_PLAYLIST_ID,
+    KS_READ_WRITE_TOKEN: process.env.KS_READ_WRITE_TOKEN,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

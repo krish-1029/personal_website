@@ -6,6 +6,8 @@ export default function WritingsPage() {
         psychology, and theology. If you&apos;re concerned about job applications,
         we can keep this page separate and unlinked, or add a disclaimer.
       </p>
+      {/* Scroll area for testing */}
+      <div className="h-[200vh]" />
     </main>
   );
 } 

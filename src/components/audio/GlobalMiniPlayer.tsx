@@ -2,31 +2,44 @@
 
 import { useAudioPlayer } from "./AudioPlayerProvider";
 import { Pause, Play, Rewind, FastForward, Volume1, Volume2, VolumeX } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return "0:00";
   const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60)
-    .toString()
-    .padStart(2, "0");
+  const s = Math.floor(seconds % 60).toString().padStart(2, "0");
   return `${m}:${s}`;
 }
 
-export default function GlobalMiniPlayer() {
-  const { currentTrack, isPlaying, currentTime, duration, volume, togglePlayPause, playNext, playPrev, seek, setVolume, lastPauseSource } = useAudioPlayer();
+export default function GlobalMiniPlayer({ position = "fixed" as "fixed" | "sticky" }) {
+  const { currentTrack, isPlaying, currentTime, duration, volume, togglePlayPause, playNext, playPrev, seek, setVolume, lastPauseSource, globalOrigin } = useAudioPlayer();
   const pathname = usePathname();
 
   const onMusicPage = pathname?.startsWith("/music");
-  const shouldShow = (!onMusicPage && (isPlaying || lastPauseSource === "mini")) && !!currentTrack;
+  const eligible = globalOrigin === "music" && !!currentTrack;
+  const shouldShow = eligible && !onMusicPage && (isPlaying || lastPauseSource === "mini");
 
-  return (
-    <div
-      className={`fixed bottom-12 left-0 right-0 z-0 border-t border-white/10 bg-white/5 backdrop-blur-md transition-transform duration-300 ease-out will-change-transform ${
-        shouldShow ? "translate-y-0" : "translate-y-full"
-      }`}
-      aria-hidden={!shouldShow}
-    >
+  // Hooks with stable order
+  const [lift, setLift] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!shouldShow || position !== "fixed") return; // only needed for fixed mode
+    const el = sentinelRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry) setLift(entry.isIntersecting);
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [shouldShow, position]);
+
+  if (!shouldShow) return null;
+
+  const Bar = (
+    <div className="border-t border-white/10 bg-white/5 backdrop-blur-md" aria-hidden={false}>
       <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-2 text-white">
         <div className="min-w-0 grow truncate text-sm text-white/80">
           {currentTrack ? currentTrack.title : "No track selected"}
@@ -69,5 +82,20 @@ export default function GlobalMiniPlayer() {
         </div>
       </div>
     </div>
+  );
+
+  if (position === "sticky") {
+    // sticky within a container (parent controls boundaries)
+    return <div className="sticky bottom-0 z-10">{Bar}</div>;
+  }
+
+  // fixed to viewport with footer sentinel
+  return (
+    <>
+      <div ref={sentinelRef} className="pointer-events-none fixed bottom-[48px] left-0 right-0 h-1" />
+      <div className="fixed left-0 right-0 z-10" style={{ bottom: lift ? 60 : 48 }}>
+        {Bar}
+      </div>
+    </>
   );
 } 
