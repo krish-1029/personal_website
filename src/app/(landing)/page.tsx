@@ -7,7 +7,7 @@ export default function LandingPage() {
       <div className="mx-auto flex w-full max-w-5xl min-h-[80svh] flex-col items-center justify-center gap-6 text-center">
         <FadeContent blur duration={800} easing="ease-out" initialOpacity={0} delay={0}>
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl">
-            Krish · Developer, Musician, Writer
+            Krish · Developer, Musician
           </h1>
         </FadeContent>
         <FadeContent blur duration={800} easing="ease-out" initialOpacity={0} delay={80}>
