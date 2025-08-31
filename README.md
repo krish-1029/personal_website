@@ -44,27 +44,6 @@ A personal site that brings together a developer portfolio, original music, and 
 npm install
 ```
 
-### Environment Variables
-The project validates env vars via `src/env.js`. Create a `.env` (or `.env.local`) with the following as needed:
-
-```bash
-# General
-NODE_ENV=development
-
-# GitHub (optional; improves API limits/filters)
-GITHUB_TOKEN=                   # optional
-GITHUB_USERNAME=                # optional
-NEXT_PUBLIC_GITHUB_USERNAME=    # optional (public)
-
-# Audio / Vercel Blob
-NEXT_PUBLIC_AUDIO_BASE=         # public base URL where audio is served (Blob public URL)
-KS_READ_WRITE_TOKEN=            # Vercel Blob access token for listing (server-only)
-
-# Spotify API (server-only)
-SPOTIFY_CLIENT_ID=
-SPOTIFY_CLIENT_SECRET=
-SPOTIFY_PLAYLIST_ID=            # e.g. from a playlist URL
-```
 
 Notes:
 - `NEXT_PUBLIC_AUDIO_BASE` must be the public Blob URL where your audio files are accessible (e.g., `https://...vercel-storage.com/...`).
